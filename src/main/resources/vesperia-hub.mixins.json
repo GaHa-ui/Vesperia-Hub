@@ -7,7 +7,11 @@
         "ClientPlayerInteractionManagerMixin",
         "WorldRendererMixin",
         "InGameHudMixin",
-        "GameRendererMixin"
+        "GameRendererMixin",
+        "NoHurtcamMixin",
+        "PumpkinBlurMixin",
+        "SmoothCameraMixin",
+        "MinecraftClientMixin"
     ],
     "injectors": {
         "defaultRequire": 1

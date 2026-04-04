@@ -32,5 +32,25 @@ public class InGameHudMixin {
         mod.getHUDManager().render(context);
 
         mod.getAutoTotemIndicator().render(context);
+
+        if (VesperiaConfig.MLG_INDICATOR) {
+            mod.getMlgIndicatorManager().render(context);
+        }
+
+        if (VesperiaConfig.PARKOUR_HELPER) {
+            mod.getParkourHelperManager().render(context);
+        }
+
+        if (VesperiaConfig.SOUND_VISUALIZER) {
+            mod.getSoundVisualizerManager().render(context);
+        }
+
+        if (VesperiaConfig.SOUND_INDICATORS) {
+            mod.getSoundIndicatorsManager().render(context);
+        }
+
+        if (VesperiaConfig.CHUNK_BORDERS) {
+            mod.getStreamEffectsManager().render(context);
+        }
     }
 }

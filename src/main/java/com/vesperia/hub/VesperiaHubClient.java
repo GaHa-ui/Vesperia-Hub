@@ -40,6 +40,13 @@ public class VesperiaHubClient implements ClientModInitializer {
     private BuilderHelperManager builderHelperManager;
     private AutoTotemIndicator autoTotemIndicator;
     private StreamEffectsManager streamEffectsManager;
+    private ViewModelManager viewModelManager;
+    private DynamicLightsManager dynamicLightsManager;
+    private EnhancedTooltipsManager enhancedTooltipsManager;
+    private MLGIndicatorManager mlgIndicatorManager;
+    private ParkourHelperManager parkourHelperManager;
+    private SoundVisualizerManager soundVisualizerManager;
+    private SoundIndicatorsManager soundIndicatorsManager;
     private ClientEventHandler eventHandler;
 
     @Override
@@ -90,6 +97,13 @@ public class VesperiaHubClient implements ClientModInitializer {
         builderHelperManager = new BuilderHelperManager();
         autoTotemIndicator = new AutoTotemIndicator();
         streamEffectsManager = new StreamEffectsManager();
+        viewModelManager = new ViewModelManager();
+        dynamicLightsManager = new DynamicLightsManager();
+        enhancedTooltipsManager = new EnhancedTooltipsManager();
+        mlgIndicatorManager = new MLGIndicatorManager();
+        parkourHelperManager = new ParkourHelperManager();
+        soundVisualizerManager = new SoundVisualizerManager();
+        soundIndicatorsManager = new SoundIndicatorsManager();
         eventHandler = new ClientEventHandler(this);
     }
 
@@ -108,6 +122,30 @@ public class VesperiaHubClient implements ClientModInitializer {
 
         if (VesperiaConfig.BLOCK_IN_VISUALIZER || VesperiaConfig.SCAFFOLD_VISUAL) {
             builderHelperManager.update();
+        }
+
+        if (VesperiaConfig.DYNAMIC_LIGHTS) {
+            dynamicLightsManager.tick();
+        }
+
+        if (VesperiaConfig.VIEWMODEL || VesperiaConfig.SWING_ANIMATION) {
+            viewModelManager.tick();
+        }
+
+        if (VesperiaConfig.MLG_INDICATOR) {
+            mlgIndicatorManager.tick();
+        }
+
+        if (VesperiaConfig.PARKOUR_HELPER) {
+            parkourHelperManager.tick();
+        }
+
+        if (VesperiaConfig.SOUND_VISUALIZER) {
+            soundVisualizerManager.tick();
+        }
+
+        if (VesperiaConfig.SOUND_INDICATORS) {
+            soundIndicatorsManager.tick();
         }
 
         effectRenderer.tick();
@@ -129,6 +167,13 @@ public class VesperiaHubClient implements ClientModInitializer {
     public BuilderHelperManager getBuilderHelperManager() { return builderHelperManager; }
     public AutoTotemIndicator getAutoTotemIndicator() { return autoTotemIndicator; }
     public StreamEffectsManager getStreamEffectsManager() { return streamEffectsManager; }
+    public ViewModelManager getViewModelManager() { return viewModelManager; }
+    public DynamicLightsManager getDynamicLightsManager() { return dynamicLightsManager; }
+    public EnhancedTooltipsManager getEnhancedTooltipsManager() { return enhancedTooltipsManager; }
+    public MLGIndicatorManager getMlgIndicatorManager() { return mlgIndicatorManager; }
+    public ParkourHelperManager getParkourHelperManager() { return parkourHelperManager; }
+    public SoundVisualizerManager getSoundVisualizerManager() { return soundVisualizerManager; }
+    public SoundIndicatorsManager getSoundIndicatorsManager() { return soundIndicatorsManager; }
     public ClientEventHandler getEventHandler() { return eventHandler; }
 
     public KeyBinding getZoomKey() { return zoomKey; }
