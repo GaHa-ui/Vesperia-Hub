@@ -6,7 +6,8 @@
     "client": [
         "ClientPlayerInteractionManagerMixin",
         "WorldRendererMixin",
-        "InGameHudMixin"
+        "InGameHudMixin",
+        "GameRendererMixin"
     ],
     "injectors": {
         "defaultRequire": 1

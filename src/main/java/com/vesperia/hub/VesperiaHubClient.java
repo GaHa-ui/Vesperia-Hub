@@ -1,10 +1,21 @@
 package com.vesperia.hub;
 
-import com.vesperia.hub.client.event.ClientEventHandler;
-import com.vesperia.hub.client.visual.*;
-import com.vesperia.hub.client.config.ModConfig;
+import com.vesperia.hub.client.effects.*;
+import com.vesperia.hub.client.hud.*;
+import com.vesperia.hub.client.crosshair.*;
+import com.vesperia.hub.client.pvp.*;
+import com.vesperia.hub.client.qol.*;
+import com.vesperia.hub.client.builders.*;
+import com.vesperia.hub.client.stream.*;
+import com.vesperia.hub.client.managers.*;
+import com.vesperia.hub.config.VesperiaConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,57 +24,115 @@ public class VesperiaHubClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     private static VesperiaHubClient INSTANCE;
-    private HitParticleRenderer hitParticleRenderer;
-    private DamageNumberRenderer damageNumberRenderer;
-    private TargetHUD targetHUD;
-    private TrajectoryRenderer trajectoryRenderer;
-    private CriticalEffectRenderer criticalEffectRenderer;
+
+    private KeyBinding zoomKey;
+    private KeyBinding configKey;
+
+    private HitEffectManager hitEffectManager;
+    private DamageNumberManager damageNumberManager;
+    private TargetHUDManager targetHUDManager;
+    private ComboCounterManager comboCounterManager;
+    private CrosshairManager crosshairManager;
+    private HUDManager hudManager;
+    private QOLManager qolManager;
+    private EffectRenderer effectRenderer;
+    private TrajectoryManager trajectoryManager;
+    private BuilderHelperManager builderHelperManager;
+    private AutoTotemIndicator autoTotemIndicator;
+    private StreamEffectsManager streamEffectsManager;
     private ClientEventHandler eventHandler;
 
     @Override
     public void onInitializeClient() {
         INSTANCE = this;
+        LOGGER.info("===========================================");
         LOGGER.info("Vesperia Hub initializing...");
+        LOGGER.info("60 visual features loaded!");
+        LOGGER.info("===========================================");
 
-        ModConfig.load();
+        VesperiaConfig.getInstance().load();
 
-        hitParticleRenderer = new HitParticleRenderer();
-        damageNumberRenderer = new DamageNumberRenderer();
-        targetHUD = new TargetHUD();
-        trajectoryRenderer = new TrajectoryRenderer();
-        criticalEffectRenderer = new CriticalEffectRenderer();
-        eventHandler = new ClientEventHandler(this);
+        initKeybindings();
+        initManagers();
 
-        ClientTickEvents.END_CLIENT_TICK.register(eventHandler::onClientTick);
+        ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
 
         LOGGER.info("Vesperia Hub initialized!");
+        LOGGER.info("Press RSHIFT to open settings");
+    }
+
+    private void initKeybindings() {
+        zoomKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.vesperia-hub.zoom",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_Z,
+                "category.vesperia-hub"
+        ));
+
+        configKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.vesperia-hub.config",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_RIGHT_SHIFT,
+                "category.vesperia-hub"
+        ));
+    }
+
+    private void initManagers() {
+        hitEffectManager = new HitEffectManager();
+        damageNumberManager = new DamageNumberManager();
+        targetHUDManager = new TargetHUDManager();
+        comboCounterManager = new ComboCounterManager();
+        crosshairManager = new CrosshairManager();
+        hudManager = new HUDManager();
+        qolManager = new QOLManager();
+        effectRenderer = new EffectRenderer();
+        trajectoryManager = new TrajectoryManager();
+        builderHelperManager = new BuilderHelperManager();
+        autoTotemIndicator = new AutoTotemIndicator();
+        streamEffectsManager = new StreamEffectsManager();
+        eventHandler = new ClientEventHandler(this);
+    }
+
+    private void onTick(MinecraftClient client) {
+        if (client.player == null || client.world == null) return;
+
+        crosshairManager.update();
+
+        if (VesperiaConfig.QOL_MANAGER) {
+            qolManager.tick(client);
+        }
+
+        if (VesperiaConfig.TRAJECTORY_PREDICTION) {
+            trajectoryManager.update();
+        }
+
+        if (VesperiaConfig.BLOCK_IN_VISUALIZER || VesperiaConfig.SCAFFOLD_VISUAL) {
+            builderHelperManager.update();
+        }
+
+        effectRenderer.tick();
     }
 
     public static VesperiaHubClient getInstance() {
         return INSTANCE;
     }
 
-    public HitParticleRenderer getHitParticleRenderer() {
-        return hitParticleRenderer;
-    }
+    public HitEffectManager getHitEffectManager() { return hitEffectManager; }
+    public DamageNumberManager getDamageNumberManager() { return damageNumberManager; }
+    public TargetHUDManager getTargetHUDManager() { return targetHUDManager; }
+    public ComboCounterManager getComboCounterManager() { return comboCounterManager; }
+    public CrosshairManager getCrosshairManager() { return crosshairManager; }
+    public HUDManager getHUDManager() { return hudManager; }
+    public QOLManager getQOLManager() { return qolManager; }
+    public EffectRenderer getEffectRenderer() { return effectRenderer; }
+    public TrajectoryManager getTrajectoryManager() { return trajectoryManager; }
+    public BuilderHelperManager getBuilderHelperManager() { return builderHelperManager; }
+    public AutoTotemIndicator getAutoTotemIndicator() { return autoTotemIndicator; }
+    public StreamEffectsManager getStreamEffectsManager() { return streamEffectsManager; }
+    public ClientEventHandler getEventHandler() { return eventHandler; }
 
-    public DamageNumberRenderer getDamageNumberRenderer() {
-        return damageNumberRenderer;
-    }
+    public KeyBinding getZoomKey() { return zoomKey; }
+    public KeyBinding getConfigKey() { return configKey; }
 
-    public TargetHUD getTargetHUD() {
-        return targetHUD;
-    }
-
-    public TrajectoryRenderer getTrajectoryRenderer() {
-        return trajectoryRenderer;
-    }
-
-    public CriticalEffectRenderer getCriticalEffectRenderer() {
-        return criticalEffectRenderer;
-    }
-
-    public ClientEventHandler getEventHandler() {
-        return eventHandler;
-    }
+    public MinecraftClient getClient() { return MinecraftClient.getInstance(); }
 }
