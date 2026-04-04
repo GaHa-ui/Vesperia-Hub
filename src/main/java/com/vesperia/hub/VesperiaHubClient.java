@@ -8,6 +8,7 @@ import com.vesperia.hub.client.qol.*;
 import com.vesperia.hub.client.builders.*;
 import com.vesperia.hub.client.stream.*;
 import com.vesperia.hub.client.managers.*;
+import com.vesperia.hub.client.gui.VesperiaSettingsScreen;
 import com.vesperia.hub.config.VesperiaConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -109,6 +110,11 @@ public class VesperiaHubClient implements ClientModInitializer {
 
     private void onTick(MinecraftClient client) {
         if (client.player == null || client.world == null) return;
+
+        if (configKey.wasPressed()) {
+            client.setScreen(new VesperiaSettingsScreen(client.currentScreen));
+            return;
+        }
 
         crosshairManager.update();
 

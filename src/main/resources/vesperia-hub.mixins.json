@@ -6,12 +6,7 @@
     "client": [
         "ClientPlayerInteractionManagerMixin",
         "WorldRendererMixin",
-        "InGameHudMixin",
-        "GameRendererMixin",
-        "NoHurtcamMixin",
-        "PumpkinBlurMixin",
-        "SmoothCameraMixin",
-        "MinecraftClientMixin"
+        "InGameHudMixin"
     ],
     "injectors": {
         "defaultRequire": 1
