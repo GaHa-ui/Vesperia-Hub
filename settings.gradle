@@ -1,19 +1,12 @@
 pluginManagement {
-    repositories {
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        maven {
-            name = 'MinecraftForge'
-            url = 'https://maven.minecraftforge.net/'
-        }
-        gradlePluginPortal()
-    }
-}
-
-plugins {
-    id 'net.fabricmc.fabric-loom-remap' version '1.12' apply false
+	repositories {
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		mavenCentral()
+		gradlePluginPortal()
+	}
 }
 
 rootProject.name = 'vesperia-hub'
