@@ -1,0 +1,23 @@
+{
+    "schemaVersion": 1,
+    "id": "vesperia-hub",
+    "version": "${version}",
+    "name": "Vesperia Hub",
+    "description": "PvP visual mod with Hit Particles, Target HUD, Damage Numbers, Critical Effects and Trajectory Prediction",
+    "authors": ["GaHa-ui"],
+    "contact": {
+        "homepage": "https://github.com/GaHa-ui/vesperia-hub"
+    },
+    "license": "MIT",
+    "icon": "assets/vesperia-hub/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": ["com.vesperia.hub.VesperiaHubClient"]
+    },
+    "depends": {
+        "fabricloader": ">=0.16.0",
+        "minecraft": "1.21.x",
+        "java": ">=21",
+        "fabric-api": "*"
+    }
+}

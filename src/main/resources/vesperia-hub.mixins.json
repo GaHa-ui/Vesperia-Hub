@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.vesperia.hub.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "client": [
+        "ClientPlayerInteractionManagerMixin",
+        "WorldRendererMixin",
+        "InGameHudMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
