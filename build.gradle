@@ -15,7 +15,6 @@ repositories {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/vesperia-hub.accesswidener")
 }
 
 dependencies {
