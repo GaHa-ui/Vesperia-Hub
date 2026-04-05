@@ -3,6 +3,7 @@ package com.vesperia.hub;
 import com.vesperia.hub.client.VesperiaHUD;
 import com.vesperia.hub.client.EffectsManager;
 import com.vesperia.hub.client.TrajectoryManager;
+import com.vesperia.hub.client.gui.VesperiaSettingsScreen;
 import com.vesperia.hub.config.VesperiaConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -21,6 +22,7 @@ public class VesperiaHubClient implements ClientModInitializer {
     private static VesperiaHubClient INSTANCE;
     
     private KeyBinding zoomKey;
+    private KeyBinding settingsKey;
     private VesperiaHUD hud;
     private EffectsManager effects;
     private TrajectoryManager trajectory;
@@ -44,6 +46,13 @@ public class VesperiaHubClient implements ClientModInitializer {
             KeyBinding.Category.MISCELLANEOUS
         ));
 
+        settingsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.vesperia-hub.settings",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_RIGHT_SHIFT,
+            KeyBinding.Category.MISCELLANEOUS
+        ));
+
         hud = new VesperiaHUD();
         effects = new EffectsManager();
         trajectory = new TrajectoryManager();
@@ -51,11 +60,16 @@ public class VesperiaHubClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
 
         LOGGER.info("Vesperia Hub initialized!");
-        LOGGER.info("Z = Zoom");
+        LOGGER.info("Z = Zoom | RSHIFT = Settings");
     }
 
     private void onTick(MinecraftClient client) {
         if (client.player == null) return;
+
+        if (settingsKey.wasPressed()) {
+            client.setScreen(new VesperiaSettingsScreen(client.currentScreen));
+            return;
+        }
 
         effects.tick();
         
@@ -103,6 +117,10 @@ public class VesperiaHubClient implements ClientModInitializer {
 
     public KeyBinding getZoomKey() {
         return zoomKey;
+    }
+
+    public KeyBinding getSettingsKey() {
+        return settingsKey;
     }
 
     public int getCps() {
