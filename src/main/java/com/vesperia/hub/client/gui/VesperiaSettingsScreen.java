@@ -22,12 +22,12 @@ public class VesperiaSettingsScreen extends Screen {
 
     @Override
     protected void init() {
-        clearWidgets();
+        clearAndInit();
         rebuild();
     }
 
     private void rebuild() {
-        clearWidgets();
+        clearAndInit();
         int centerX = this.width / 2;
         int startY = 30;
 
