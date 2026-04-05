@@ -1,13 +1,11 @@
 package com.vesperia.hub.client.gui;
 
-import com.vesperia.hub.VesperiaHubClient;
 import com.vesperia.hub.config.VesperiaConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.InputUtil.KeyInput;
 import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
@@ -15,6 +13,7 @@ public class VesperiaSettingsScreen extends Screen {
     private final Screen parent;
     private int page = 0;
     private static final int PAGES = 3;
+    private DrawContext drawContext;
 
     public VesperiaSettingsScreen(Screen parent) {
         super(Text.literal("Vesperia Hub Settings"));
@@ -27,23 +26,23 @@ public class VesperiaSettingsScreen extends Screen {
     }
 
     private void rebuild() {
-        clearAndInit();
+        clearWidgets();
         int centerX = this.width / 2;
         int startY = 30;
 
         String[] titles = {"HUD", "Effects", "Crosshair"};
-        this.drawCenteredText(context, Text.literal(titles[page]), centerX, 10, 0xFFFFFF);
+        textRenderer.draw(centerX - textRenderer.getWidth(titles[page]) / 2, 10, 0xFFFFFF, true, Text.literal(titles[page]).getString(), drawContext.getMatrices(), true, 0, 0xFFFFFF);
 
         int y = startY;
         int col1X = centerX - 150;
         int col2X = centerX + 20;
 
         switch (page) {
-            case 0: // HUD
+            case 0:
                 addToggle(col1X, y += 25, "FPS Counter", VesperiaConfig.FPS_COUNTER, v -> VesperiaConfig.FPS_COUNTER = v);
                 addToggle(col1X, y += 25, "Ping Display", VesperiaConfig.PING_DISPLAY, v -> VesperiaConfig.PING_DISPLAY = v);
                 addToggle(col1X, y += 25, "Coordinates", VesperiaConfig.COORDS_DISPLAY, v -> VesperiaConfig.COORDS_DISPLAY = v);
-                addToggle(col1X, y += 25, "Direction (N/E/S/W)", VesperiaConfig.DIRECTION_HUD, v -> VesperiaConfig.DIRECTION_HUD = v);
+                addToggle(col1X, y += 25, "Direction", VesperiaConfig.DIRECTION_HUD, v -> VesperiaConfig.DIRECTION_HUD = v);
                 addToggle(col1X, y += 25, "Potion Effects", VesperiaConfig.POTION_HUD, v -> VesperiaConfig.POTION_HUD = v);
                 addToggle(col1X, y += 25, "Armor Display", VesperiaConfig.ARMOR_HUD, v -> VesperiaConfig.ARMOR_HUD = v);
 
@@ -56,7 +55,7 @@ public class VesperiaSettingsScreen extends Screen {
                 addToggle(col2X, y += 25, "Zoom (Z key)", VesperiaConfig.ZOOM, v -> VesperiaConfig.ZOOM = v);
                 break;
 
-            case 1: // Effects
+            case 1:
                 addToggle(col1X, y += 25, "Hit Effects", VesperiaConfig.HIT_EFFECTS, v -> VesperiaConfig.HIT_EFFECTS = v);
                 addToggle(col1X, y += 25, "Damage Numbers", VesperiaConfig.DAMAGE_NUMBERS, v -> VesperiaConfig.DAMAGE_NUMBERS = v);
                 addToggle(col1X, y += 25, "Hit Particles", VesperiaConfig.HIT_PARTICLES, v -> VesperiaConfig.HIT_PARTICLES = v);
@@ -66,10 +65,9 @@ public class VesperiaSettingsScreen extends Screen {
 
                 y = startY;
                 addToggle(col2X, y += 25, "Trajectory Predict", VesperiaConfig.TRAJECTORY_PREDICTION, v -> VesperiaConfig.TRAJECTORY_PREDICTION = v);
-                addToggle(col2X, y += 25, "CPS Counter", VesperiaConfig.CPS_COUNTER, v -> VesperiaConfig.CPS_COUNTER = v);
                 break;
 
-            case 2: // Crosshair
+            case 2:
                 addToggle(col1X, y += 25, "Custom Crosshair", VesperiaConfig.CUSTOM_CROSSHAIR, v -> VesperiaConfig.CUSTOM_CROSSHAIR = v);
                 addToggle(col1X, y += 25, "Dynamic Color", VesperiaConfig.DYNAMIC_CROSSHAIR, v -> VesperiaConfig.DYNAMIC_CROSSHAIR = v);
                 addToggle(col1X, y += 25, "Dot Crosshair", VesperiaConfig.DOT_CROSSHAIR, v -> VesperiaConfig.DOT_CROSSHAIR = v);
@@ -77,15 +75,14 @@ public class VesperiaSettingsScreen extends Screen {
                 break;
         }
 
-        // Navigation buttons
         int navY = this.height - 30;
         
-        addDrawableChild(ButtonWidget.builder(Text.literal("◀"), btn -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("<"), btn -> {
             page = (page - 1 + PAGES) % PAGES;
             rebuild();
         }).dimensions(centerX - 100, navY, 30, 20).build());
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("▶"), btn -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal(">"), btn -> {
             page = (page + 1) % PAGES;
             rebuild();
         }).dimensions(centerX + 70, navY, 30, 20).build());
@@ -101,7 +98,7 @@ public class VesperiaSettingsScreen extends Screen {
     }
 
     private void addToggle(int x, int y, String text, boolean value, java.util.function.Consumer<Boolean> setter) {
-        addDrawableChild(ButtonWidget.builder(Text.literal(value ? "§a● " + text : "§c○ " + text), btn -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal((value ? "[ON] " : "[OFF]") + text), btn -> {
             setter.accept(!value);
             rebuild();
         }).dimensions(x, y, 130, 20).build());
@@ -109,17 +106,8 @@ public class VesperiaSettingsScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.drawContext = context;
         this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean keyPressed(KeyInput input) {
-        if (input.keyCode() == 256) {
-            VesperiaConfig.save();
-            this.client.setScreen(parent);
-            return true;
-        }
-        return super.keyPressed(input);
     }
 }
