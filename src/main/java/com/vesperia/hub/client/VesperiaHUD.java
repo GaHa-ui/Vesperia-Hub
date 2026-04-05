@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.text.Text;
 
 public class VesperiaHUD {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -68,8 +69,7 @@ public class VesperiaHUD {
             case WEST -> 3;
             default -> 0;
         };
-        context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(),
-            dirs[idx], sw / 2, 5, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(client.textRenderer, dirs[idx], sw / 2, 5, 0xFFFFFF);
     }
 
     private void renderPotions(DrawContext context) {
@@ -94,17 +94,18 @@ public class VesperiaHUD {
     private void renderKeystrokes(DrawContext context, int sw, int sh) {
         int cx = sw / 2;
         int cy = sh - 50;
-        int on = 0xFF5555FF, off = 0x88555555;
+        int on = 0xFF5555FF;
+        int off = 0x88555555;
 
         context.fill(cx - 20, cy - 20, cx + 20, cy - 5, client.options.forwardKey.isPressed() ? on : off);
         context.fill(cx - 40, cy, cx - 20, cy + 15, client.options.leftKey.isPressed() ? on : off);
         context.fill(cx - 20, cy, cx + 20, cy + 15, client.options.backKey.isPressed() ? on : off);
         context.fill(cx + 20, cy, cx + 40, cy + 15, client.options.rightKey.isPressed() ? on : off);
 
-        context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(), "W", cx, cy - 15, 0xFFFFFF);
-        context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(), "A", cx - 30, cy + 3, 0xFFFFFF);
-        context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(), "S", cx, cy + 3, 0xFFFFFF);
-        context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(), "D", cx + 30, cy + 3, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(client.textRenderer, "W", cx, cy - 15, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(client.textRenderer, "A", cx - 30, cy + 3, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(client.textRenderer, "S", cx, cy + 3, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(client.textRenderer, "D", cx + 30, cy + 3, 0xFFFFFF);
     }
 
     private void renderCps(DrawContext context, int sw) {
@@ -129,15 +130,15 @@ public class VesperiaHUD {
         context.fill(x - 70, y - 35, x + 70, y + 35, 0x90000000);
 
         String name = entity.getName().getString();
-        context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(), name, x, y - 25, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(client.textRenderer, name, x, y - 25, 0xFFFFFF);
 
         float hp = entity.getHealth();
         float maxHp = entity.getMaxHealth();
-        float barW = 120;
+        int barW = 120;
         context.fill(x - barW/2, y - 5, x - barW/2 + (int)(barW * hp / maxHp), y + 5, getHealthColor(hp / maxHp));
 
         String hpText = String.format("%.1f / %.1f", hp, maxHp);
-        context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(), hpText, x, y + 10, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(client.textRenderer, hpText, x, y + 10, 0xFFFFFF);
     }
 
     private void renderCrosshair(DrawContext context, int sw, int sh) {
@@ -162,8 +163,7 @@ public class VesperiaHUD {
     private void renderCombo(DrawContext context, int sw, int sh) {
         if (combo >= 2) {
             int color = combo >= 10 ? 0xFFFF5555 : combo >= 5 ? 0xFFFFFF55 : 0xFFFFFFFF;
-            context.drawCenteredTextWithShadow(client.textRenderer, context.getMatrices(),
-                combo + "x COMBO", sw - 60, sh / 2, color);
+            context.drawCenteredTextWithShadow(client.textRenderer, combo + "x COMBO", sw - 60, sh / 2, color);
         }
 
         long now = System.currentTimeMillis();

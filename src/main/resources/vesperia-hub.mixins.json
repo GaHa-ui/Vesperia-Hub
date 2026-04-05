@@ -4,8 +4,7 @@
     "package": "com.vesperia.hub.mixin",
     "compatibilityLevel": "JAVA_21",
     "client": [
-        "InGameHudMixin",
-        "AttackMixin"
+        "InGameHudMixin"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -19,11 +19,8 @@ public class VesperiaHubClient implements ClientModInitializer {
     private static VesperiaHubClient INSTANCE;
     
     private KeyBinding zoomKey;
-    private KeyBinding configKey;
     private VesperiaHUD hud;
-    private int ticks = 0;
     private int cps = 0;
-    private int lastAttackCount = 0;
 
     @Override
     public void onInitializeClient() {
@@ -46,20 +43,19 @@ public class VesperiaHubClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
 
         LOGGER.info("Vesperia Hub initialized!");
-        LOGGER.info("Z = Zoom | RSHIFT = Settings");
+        LOGGER.info("Z = Zoom");
     }
 
     private void onTick(MinecraftClient client) {
         if (client.player == null) return;
-        ticks++;
-
-        if (ticks % 20 == 0) {
-            lastAttackCount = client.gameMode.getAttackCooldownProgressPerTick();
-        }
 
         if (VesperiaConfig.ZOOM && zoomKey.wasPressed()) {
-            float fov = client.options.getFov().getValue().floatValue();
-            client.options.getFov().setValue(fov == 70f ? 70f * VesperiaConfig.ZOOM_LEVEL : 70f);
+            float currentFov = client.options.getFov().getValue().floatValue();
+            if (currentFov == 70f) {
+                client.options.getFov().setValue(70f * VesperiaConfig.ZOOM_LEVEL);
+            } else {
+                client.options.getFov().setValue(70f);
+            }
         }
     }
 
