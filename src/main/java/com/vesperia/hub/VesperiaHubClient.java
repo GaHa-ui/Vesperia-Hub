@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -43,14 +44,14 @@ public class VesperiaHubClient implements ClientModInitializer {
             "key.vesperia-hub.zoom",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_Z,
-            KeyBinding.Category.MISCELLANEOUS
+            "key.categories.misc"
         ));
 
         settingsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.vesperia-hub.settings",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_RIGHT_SHIFT,
-            KeyBinding.Category.MISCELLANEOUS
+            "key.categories.misc"
         ));
 
         hud = new VesperiaHUD();
@@ -87,7 +88,7 @@ public class VesperiaHubClient implements ClientModInitializer {
         }
 
         if (client.options.jumpKey.wasPressed() && VesperiaConfig.JUMP_CIRCLE) {
-            effects.onJump(client.player.getPos());
+            effects.onJump(new Vec3d(client.player.getX(), client.player.getY(), client.player.getZ()));
         }
 
         long now = System.currentTimeMillis();

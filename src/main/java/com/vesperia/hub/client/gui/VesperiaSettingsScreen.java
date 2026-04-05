@@ -7,6 +7,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.util.InputUtil.KeyInput;
 import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
@@ -26,12 +27,12 @@ public class VesperiaSettingsScreen extends Screen {
     }
 
     private void rebuild() {
-        clearWidgets();
+        clearAndInit();
         int centerX = this.width / 2;
         int startY = 30;
 
         String[] titles = {"HUD", "Effects", "Crosshair"};
-        this.drawCenteredText(textRenderer, Text.literal("§b§lVesperia Hub §f- " + titles[page]), centerX, 10, 0xFFFFFF);
+        this.drawCenteredText(context, Text.literal(titles[page]), centerX, 10, 0xFFFFFF);
 
         int y = startY;
         int col1X = centerX - 150;
@@ -113,12 +114,12 @@ public class VesperiaSettingsScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256) {
+    public boolean keyPressed(KeyInput input) {
+        if (input.keyCode() == 256) {
             VesperiaConfig.save();
             this.client.setScreen(parent);
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 }
