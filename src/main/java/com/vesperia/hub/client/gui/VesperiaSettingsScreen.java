@@ -13,7 +13,7 @@ public class VesperiaSettingsScreen extends Screen {
     private final Screen parent;
     private int page = 0;
     private static final int PAGES = 3;
-    private DrawContext drawContext;
+    private DrawContext currentContext;
 
     public VesperiaSettingsScreen(Screen parent) {
         super(Text.literal("Vesperia Hub Settings"));
@@ -22,6 +22,7 @@ public class VesperiaSettingsScreen extends Screen {
 
     @Override
     protected void init() {
+        clearWidgets();
         rebuild();
     }
 
@@ -31,7 +32,9 @@ public class VesperiaSettingsScreen extends Screen {
         int startY = 30;
 
         String[] titles = {"HUD", "Effects", "Crosshair"};
-        textRenderer.draw(centerX - textRenderer.getWidth(titles[page]) / 2, 10, 0xFFFFFF, true, Text.literal(titles[page]).getString(), drawContext.getMatrices(), true, 0, 0xFFFFFF);
+        if (currentContext != null) {
+            currentContext.drawCenteredTextWithShadow(this.textRenderer, Text.literal(titles[page]), centerX, 10, 0xFFFFFF);
+        }
 
         int y = startY;
         int col1X = centerX - 150;
@@ -106,7 +109,7 @@ public class VesperiaSettingsScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.drawContext = context;
+        this.currentContext = context;
         this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
     }

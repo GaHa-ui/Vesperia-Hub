@@ -45,14 +45,14 @@ public class VesperiaHubClient implements ClientModInitializer {
             "key.vesperia-hub.zoom",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_Z,
-            KeyBinding.Category.IN_GAME
+            KeyBinding.Category.MISC
         ));
 
         settingsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.vesperia-hub.settings",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_RIGHT_SHIFT,
-            KeyBinding.Category.IN_GAME
+            KeyBinding.Category.MISC
         ));
 
         hud = new VesperiaHUD();
