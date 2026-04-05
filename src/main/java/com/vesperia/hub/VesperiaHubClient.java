@@ -1,6 +1,8 @@
 package com.vesperia.hub;
 
 import com.vesperia.hub.client.VesperiaHUD;
+import com.vesperia.hub.client.EffectsManager;
+import com.vesperia.hub.client.TrajectoryManager;
 import com.vesperia.hub.config.VesperiaConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -8,7 +10,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.option.GameOptions;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,11 @@ public class VesperiaHubClient implements ClientModInitializer {
     
     private KeyBinding zoomKey;
     private VesperiaHUD hud;
+    private EffectsManager effects;
+    private TrajectoryManager trajectory;
     private int cps = 0;
+    private int clicks = 0;
+    private long lastClickTime = 0;
 
     @Override
     public void onInitializeClient() {
@@ -40,6 +45,8 @@ public class VesperiaHubClient implements ClientModInitializer {
         ));
 
         hud = new VesperiaHUD();
+        effects = new EffectsManager();
+        trajectory = new TrajectoryManager();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
 
@@ -50,6 +57,12 @@ public class VesperiaHubClient implements ClientModInitializer {
     private void onTick(MinecraftClient client) {
         if (client.player == null) return;
 
+        effects.tick();
+        
+        if (VesperiaConfig.TRAJECTORY_PREDICTION) {
+            trajectory.update();
+        }
+
         if (VesperiaConfig.ZOOM && zoomKey.wasPressed()) {
             int currentFov = client.options.getFov().getValue();
             if (currentFov == 70) {
@@ -58,6 +71,18 @@ public class VesperiaHubClient implements ClientModInitializer {
                 client.options.getFov().setValue(70);
             }
         }
+
+        if (client.options.jumpKey.wasPressed() && VesperiaConfig.JUMP_CIRCLE) {
+            effects.onJump(client.player.getPos());
+        }
+
+        long now = System.currentTimeMillis();
+        if (now - lastClickTime > 1000) {
+            cps = clicks;
+            clicks = 0;
+            lastClickTime = now;
+        }
+        clicks++;
     }
 
     public static VesperiaHubClient getInstance() {
@@ -68,15 +93,19 @@ public class VesperiaHubClient implements ClientModInitializer {
         return hud;
     }
 
+    public EffectsManager getEffects() {
+        return effects;
+    }
+
+    public TrajectoryManager getTrajectory() {
+        return trajectory;
+    }
+
     public KeyBinding getZoomKey() {
         return zoomKey;
     }
 
     public int getCps() {
         return cps;
-    }
-
-    public void setCps(int cps) {
-        this.cps = cps;
     }
 }

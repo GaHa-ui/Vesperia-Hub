@@ -21,6 +21,13 @@ public class VesperiaConfig {
     public static boolean TARGET_HUD = true;
     public static boolean COMBO_COUNTER = true;
 
+    // Effects
+    public static boolean HIT_EFFECTS = true;
+    public static boolean DAMAGE_NUMBERS = true;
+    public static boolean HIT_PARTICLES = true;
+    public static boolean SCREEN_SHAKE = true;
+    public static boolean JUMP_CIRCLE = true;
+
     // Crosshair
     public static boolean CUSTOM_CROSSHAIR = true;
     public static boolean DYNAMIC_CROSSHAIR = true;
@@ -32,6 +39,7 @@ public class VesperiaConfig {
     public static boolean ZOOM = true;
     public static float ZOOM_LEVEL = 0.4f;
     public static boolean FULLBRIGHT = false;
+    public static boolean TRAJECTORY_PREDICTION = true;
 
     public static void load() {
         if (!Files.exists(CONFIG)) {
@@ -56,6 +64,11 @@ public class VesperiaConfig {
                     case "totemCounter" -> TOTEM_COUNTER = Boolean.parseBoolean(v);
                     case "targetHud" -> TARGET_HUD = Boolean.parseBoolean(v);
                     case "comboCounter" -> COMBO_COUNTER = Boolean.parseBoolean(v);
+                    case "hitEffects" -> HIT_EFFECTS = Boolean.parseBoolean(v);
+                    case "damageNumbers" -> DAMAGE_NUMBERS = Boolean.parseBoolean(v);
+                    case "hitParticles" -> HIT_PARTICLES = Boolean.parseBoolean(v);
+                    case "screenShake" -> SCREEN_SHAKE = Boolean.parseBoolean(v);
+                    case "jumpCircle" -> JUMP_CIRCLE = Boolean.parseBoolean(v);
                     case "customCrosshair" -> CUSTOM_CROSSHAIR = Boolean.parseBoolean(v);
                     case "dynamicCrosshair" -> DYNAMIC_CROSSHAIR = Boolean.parseBoolean(v);
                     case "dotCrosshair" -> DOT_CROSSHAIR = Boolean.parseBoolean(v);
@@ -64,6 +77,7 @@ public class VesperiaConfig {
                     case "zoom" -> ZOOM = Boolean.parseBoolean(v);
                     case "zoomLevel" -> ZOOM_LEVEL = Float.parseFloat(v);
                     case "fullbright" -> FULLBRIGHT = Boolean.parseBoolean(v);
+                    case "trajectoryPrediction" -> TRAJECTORY_PREDICTION = Boolean.parseBoolean(v);
                 }
             }
         } catch (Exception e) { e.printStackTrace(); }
@@ -84,6 +98,12 @@ public class VesperiaConfig {
         sb.append("totemCounter=").append(TOTEM_COUNTER).append("\n");
         sb.append("targetHud=").append(TARGET_HUD).append("\n");
         sb.append("comboCounter=").append(COMBO_COUNTER).append("\n\n");
+        sb.append("# Effects\n");
+        sb.append("hitEffects=").append(HIT_EFFECTS).append("\n");
+        sb.append("damageNumbers=").append(DAMAGE_NUMBERS).append("\n");
+        sb.append("hitParticles=").append(HIT_PARTICLES).append("\n");
+        sb.append("screenShake=").append(SCREEN_SHAKE).append("\n");
+        sb.append("jumpCircle=").append(JUMP_CIRCLE).append("\n\n");
         sb.append("# Crosshair\n");
         sb.append("customCrosshair=").append(CUSTOM_CROSSHAIR).append("\n");
         sb.append("dynamicCrosshair=").append(DYNAMIC_CROSSHAIR).append("\n");
@@ -94,6 +114,7 @@ public class VesperiaConfig {
         sb.append("zoom=").append(ZOOM).append("\n");
         sb.append("zoomLevel=").append(ZOOM_LEVEL).append("\n");
         sb.append("fullbright=").append(FULLBRIGHT).append("\n");
+        sb.append("trajectoryPrediction=").append(TRAJECTORY_PREDICTION).append("\n");
         try { Files.writeString(CONFIG, sb.toString()); } catch (Exception e) { e.printStackTrace(); }
     }
 }

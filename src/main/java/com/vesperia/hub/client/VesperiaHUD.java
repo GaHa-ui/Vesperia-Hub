@@ -7,14 +7,10 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.text.Text;
+import org.joml.Matrix4f;
 
 public class VesperiaHUD {
     private final MinecraftClient client = MinecraftClient.getInstance();
-    private long lastFpsUpdate = 0;
-    private long fps = 60;
-    private int combo = 0;
-    private long lastHitTime = 0;
 
     public void render(DrawContext context) {
         int sw = client.getWindow().getScaledWidth();
@@ -32,14 +28,18 @@ public class VesperiaHUD {
         if (VesperiaConfig.TARGET_HUD) renderTargetHud(context, sw, sh);
         if (VesperiaConfig.CUSTOM_CROSSHAIR) renderCrosshair(context, sw, sh);
         if (VesperiaConfig.COMBO_COUNTER) renderCombo(context, sw, sh);
+        
+        if (VesperiaConfig.TRAJECTORY_PREDICTION) {
+            renderTrajectory(context);
+        }
+        
+        if (VesperiaConfig.DAMAGE_NUMBERS || VesperiaConfig.HIT_PARTICLES) {
+            renderEffects(context);
+        }
     }
 
     private void renderFps(DrawContext context, int sw) {
-        long now = System.currentTimeMillis();
-        if (now - lastFpsUpdate > 500) {
-            fps = client.getCurrentFps();
-            lastFpsUpdate = now;
-        }
+        long fps = client.getCurrentFps();
         context.drawTextWithShadow(client.textRenderer, "FPS: " + fps, sw - 65, 5, 0xFFFFFF);
     }
 
@@ -161,23 +161,41 @@ public class VesperiaHUD {
     }
 
     private void renderCombo(DrawContext context, int sw, int sh) {
+        EffectsManager effects = VesperiaHubClient.getInstance().getEffects();
+        int combo = effects.getCombo();
         if (combo >= 2) {
             int color = combo >= 10 ? 0xFFFF5555 : combo >= 5 ? 0xFFFFFF55 : 0xFFFFFFFF;
             context.drawCenteredTextWithShadow(client.textRenderer, combo + "x COMBO", sw - 60, sh / 2, color);
         }
+    }
 
-        long now = System.currentTimeMillis();
-        if (now - lastHitTime > 1500) combo = 0;
+    private void renderEffects(DrawContext context) {
+        EffectsManager effects = VesperiaHubClient.getInstance().getEffects();
+        
+        if (VesperiaConfig.DAMAGE_NUMBERS) {
+            for (EffectsManager.DamageNumberEntry e : effects.getDamageNumbers()) {
+                float alpha = (float) e.life / 60;
+                String text = String.valueOf((int) e.damage);
+                int color = e.critical ? 0xFFFF4444 : 0xFFFFD700;
+                context.drawCenteredTextWithShadow(client.textRenderer, text, 
+                    client.getWindow().getScaledWidth() / 2, 
+                    (int)(client.getWindow().getScaledHeight() / 2 - e.life), 
+                    color);
+            }
+        }
+    }
+
+    private void renderTrajectory(DrawContext context) {
+        TrajectoryManager traj = VesperiaHubClient.getInstance().getTrajectory();
+        if (traj.getPoints().isEmpty()) return;
+
+        int sw = client.getWindow().getScaledWidth();
+        int sh = client.getWindow().getScaledHeight();
+        
+        context.drawCenteredTextWithShadow(client.textRenderer, "Trajectory Active", sw / 2, sh / 2 - 100, 0x55FFFFFF);
     }
 
     private int getHealthColor(float pct) {
         return pct > 0.7f ? 0xFF55FF55 : pct > 0.4f ? 0xFFFFFF55 : 0xFFFF5555;
-    }
-
-    public void addHit() {
-        long now = System.currentTimeMillis();
-        if (now - lastHitTime < 800) combo++;
-        else combo = 1;
-        lastHitTime = now;
     }
 }
