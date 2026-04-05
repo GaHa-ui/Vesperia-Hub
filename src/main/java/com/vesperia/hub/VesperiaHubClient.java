@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.option.GameOptions;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class VesperiaHubClient implements ClientModInitializer {
             "key.vesperia-hub.zoom",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_Z,
-            "Vesperia Hub"
+            KeyBinding.Category.MISCELLANEOUS
         ));
 
         hud = new VesperiaHUD();
@@ -50,11 +51,11 @@ public class VesperiaHubClient implements ClientModInitializer {
         if (client.player == null) return;
 
         if (VesperiaConfig.ZOOM && zoomKey.wasPressed()) {
-            float currentFov = client.options.getFov().getValue().floatValue();
-            if (currentFov == 70f) {
-                client.options.getFov().setValue(70f * VesperiaConfig.ZOOM_LEVEL);
+            int currentFov = client.options.getFov().getValue();
+            if (currentFov == 70) {
+                client.options.getFov().setValue((int)(70f * VesperiaConfig.ZOOM_LEVEL));
             } else {
-                client.options.getFov().setValue(70f);
+                client.options.getFov().setValue(70);
             }
         }
     }
